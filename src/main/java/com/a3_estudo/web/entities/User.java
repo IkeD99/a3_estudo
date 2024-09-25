@@ -1,5 +1,6 @@
 package com.a3_estudo.web.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,14 +16,23 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "email", nullable = false)
     private String email;
 
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
 
+    public User() {}
+
     public User(String string, String string2, Department department1){
+
+        this.name = string;
+        this.email = string2;
+        this.department = department1;
+        
     }
 
     public Long getId() {
