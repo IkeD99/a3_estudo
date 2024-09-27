@@ -1,66 +1,66 @@
 package com.a3_estudo.web.controllers;
 
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-
-import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.a3_estudo.web.entities.User;
-import com.a3_estudo.web.exception.ResourceNotFoundException;
-import com.a3_estudo.web.repositories.UserRepository;
+import com.a3_estudo.web.services.UserService;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/user")
 public class UserController {
 
+    private final UserService userService;
+
     @Autowired
-    private UserRepository user_repo;
-
-    @GetMapping("/users")
-    public List<User> getAllUsers(){
-        return user_repo.findAll();
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
-        User user = user_repo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
-        return ResponseEntity.ok(user);
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
-    @PostMapping("/users")
-    public User createUser(@Valid @RequestBody User user){
-        return user_repo.save(user);
-    }
-    
-    @PutMapping("/users/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable(value = "id") Long userId, @Valid @RequestBody User userDetails) throws ResourceNotFoundException {
-        User user = user_repo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
-        
-        user.setName(userDetails.getName());
-        user.setEmail(userDetails.getEmail());
-        final User updatedUser = user_repo.save(user);
-        return ResponseEntity.ok(updatedUser);
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @GetMapping("/{id}")
+    public User findById(@PathVariable Long id) {
+        return userService.findById(id);
     }
 
-    @DeleteMapping("/users/{id}")
-    public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) throws ResourceNotFoundException {
-        User user = user_repo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
-        
-        user_repo.delete(user);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("deleted", Boolean.TRUE);
-        return response;
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PostMapping
+    public User insertUser(@RequestBody User user) {
+        return userService.insertUser(user);
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PutMapping
+    public User updateUser(@RequestBody User user) {
+        return userService.updateUser(user);
+    }
+
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PostMapping("/login")
+    public User login(@RequestBody User user) {
+        // Find the user by email and password
+        User existingUser = userService.findByEmailAndPassword(user.getEmail(), user.getPassword());
+        if (existingUser != null) {
+        return existingUser;
+        } else {
+            throw new RuntimeException("Invalid email or password");
+        }
     }
 }

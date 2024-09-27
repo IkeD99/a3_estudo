@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,18 +18,16 @@ public class User {
     private String name;
     @Column(name = "email", nullable = false)
     private String email;
-
-    @ManyToOne
-    @JoinColumn(name = "department_id")
-    private Department department;
+    @Column(name = "password", nullable = false)
+    private String password;
 
     public User() {}
 
-    public User(String string, String string2, Department department1){
+    public User(String name, String email, String password){
 
-        this.name = string;
-        this.email = string2;
-        this.department = department1;
+        this.name = name;
+        this.email = email;
+        this.password = password;
         
     }
 
@@ -59,12 +55,12 @@ public class User {
         this.email = email;
     }
 
-    public Department getDepartment() {
-        return department;
+    public String getPassword() {
+        return password;
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
+    public void setPassword(String password) {
+        this.password = password;
     }
-
+    
 }
