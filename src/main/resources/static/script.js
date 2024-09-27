@@ -1,10 +1,9 @@
 const loginBtn = document.getElementById('login-btn');
 const modalBox = document.getElementById('modal-box');
 
-const forms = document.querySelector(".form");
-const inputUser = document.querySelector(".user");
-const inputEmail = document.querySelector(".email");
-const inputPassword = document.querySelector(".password");
+const inputName = document.getElementById('name');
+const inputEmail = document.getElementById('email');
+const inputPassword = document.getElementById('password');
 
 loginBtn.addEventListener('click', () => {
   modalBox.classList.toggle('show');
@@ -23,18 +22,47 @@ btnSignup.addEventListener("click", function() {
   body.className = "sign-up-js";
 });
 
-function signUp() {
-  fetch("http://localhost:8080/user",
-    {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
-      method: "POST",
-      body: JSON.stringify({
-        user: inputUser.value,
-        email: inputEmail.value,
-        password: inputPassword.value
-      })
-    })
-}
+document.addEventListener('DOMContentLoaded', function(){
+  // Create a new user
+  async function createUser() {
+    try {
+      const response = await fetch('http://localhost:8080/user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: inputName.value,
+          email: inputEmail.value,
+          password: inputPassword.value
+        })
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  async function login() {
+    try {
+      const response = await fetch('http://localhost:8080/user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: inputEmail.value,
+          password: inputPassword.value
+        })
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  document.getElementById('signupbtn').addEventListener('click', createUser);
+  document.getElementById('signinbtn').addEventListener('click', login);
+});
