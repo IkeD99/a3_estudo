@@ -17,8 +17,12 @@ public class Department {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public Department(){
+    public Department(){}
 
+    public Department(String string){
+
+        this.name = string;
+        
     }
 
     public Long getId() {
